@@ -1,0 +1,26 @@
+export const dependencies = [
+'https://unpkg.com/lit@2.1.1?module',
+'https://unpkg.com/lit@2.1.1/directives/async-append.js?module',
+'https://unpkg.com/lit@2.1.1/directives/async-replace.js?module',
+'https://unpkg.com/lit@2.1.1/directives/cache.js?module',
+'https://unpkg.com/lit@2.1.1/directives/choose.js?module',
+'https://unpkg.com/lit@2.1.1/directives/class-map.js?module',
+'https://unpkg.com/lit@2.1.1/directives/if-defined.js?module',
+'https://unpkg.com/lit@2.1.1/directives/join.js?module',
+'https://unpkg.com/lit@2.1.1/directives/keyed.js?module',
+'https://unpkg.com/lit@2.1.1/directives/guard.js?module',
+'https://unpkg.com/lit@2.1.1/directives/ref.js?module',
+'https://unpkg.com/lit@2.1.1/directives/repeat.js?module',
+'https://unpkg.com/lit@2.1.1/directives/style-map.js?module',
+'https://unpkg.com/lit@2.1.1/directives/unsafe-html.js?module',
+'https://unpkg.com/lit@2.1.1/directives/until.js?module',
+'https://unpkg.com/lit@2.1.1/html.js?module',
+'https://unpkg.com/lit@2.1.1/directives/live.js?module',
+'https://unpkg.com/lit@2.1.1/directives/map.js?module',
+'https://unpkg.com/lit@2.1.1/directives/range.js?module',
+'https://unpkg.com/lit@2.1.1/directives/when.js?module',
+'https://unpkg.com/lit@2.1.1/directives/template-content.js?module',
+'https://unpkg.com/lit@2.1.1/directives/unsafe-svg.js?module',
+];
+
+console.warn(`DONE? DONE!`);
