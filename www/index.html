@@ -1,2 +1,27 @@
 <!doctype html>
-<html><body>index
+<html><head>
+<title>sourdough starter demo</title>
+<style>
+
+</style>
+</head><body>
+
+<sour-dough>bread</sour-dough>
+<script type="module">
+import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
+
+customElements.define('sour-dough', class SourDough extends LitElement{
+	static get styles(){
+		return css`
+			:host{display:block;}
+		`;
+	}
+	constructor(){
+		super();
+	}
+	render(){
+		return html`baked <slot>...</slot>`;
+	}
+});
+</script>
+
