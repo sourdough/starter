@@ -3,7 +3,7 @@ load a list of urls from a file/stdin and dump them into the destination (creati
 * currently only supports unpkg.com
 * see deno install info at https://deno.land as needed then
 * run from root of www project, like cd ~/path/to/wwwroot with:
-$ deno run --allow-env --allow-read=./ --allow-write=./lib/external --allow-net='unpkg.com' ./tools/external.importer.js -file='./lib/external.dependencies.js' -dump=./lib/external
+$ deno run --allow-env --allow-read=./ --allow-write=./www/external --allow-net='unpkg.com' ./tools/external.importer.js -file='./tools/external.dependencies.js' -dump=./www/external/
 
 file external.dependencies.js has something like:
 export const dependencies = [
@@ -27,8 +27,8 @@ const pwd = Deno.env.get('PWD');
 const config = {
 	verbose: false,
 	max: 5,
-	file: './lib/external.dependencies.js',
-	dump: './lib/external/',
+	file: './external.dependencies.js',
+	dump: './www/external/',
 	wwwroot: pwd,
 	help: false,
 
