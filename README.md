@@ -1,7 +1,12 @@
 # starter
 www starter 🦕
 
-* script to import external bare imports from a CDN for local consumption with ES module paths resolved locally in static copies; removes the need to resolve bare imports etc through various services and npm by using a CDN like unpkg (currently only supports unpkg)
+goals
+* reduce risk and complexity associated with package management and ES module use
+* ease development with modern libraries like [Lit](https://lit.dev) and tools like [Deno](https://deno.land)
+
+includes
+* script to import external bare imports from a CDN for local consumption with ES module paths resolved locally in static copies; removes the need to resolve bare imports etc through various services and npm by using a CDN like unpkg (currently only supports [unpkg](https://unpkg.com))
 * http service for local development
 
 demo:
