@@ -6,7 +6,7 @@ const options = {
 	save: false
 };
 
-const versionPattern = /(?:[0-9]+\.){2}[0-9_a-zA-Z.-]*$/;
+const versionPattern = /(?:[0-9]+\.){2}[0-9]+[0-9a-zA-Z._-]*/;
 
 Deno.args.reduce(function _options_(options, arg, i){
 	const parts = arg.match(/^-+([a-z][a-z0-9]+)(?:[=:]?(.+))?/i);
