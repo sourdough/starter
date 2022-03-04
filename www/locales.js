@@ -81,7 +81,7 @@ async function setLocaleUrl(want){
 
 function updateLocaleFromUrl(location=self.location){
 	const url = new URL(location);
-	const param = url.searchParams.get('lang') || lang;
+	const param = url.searchParams.get('lang') || userLocale;
 	if(localeDictionary[ param ] && param !== getLocale()){
 		setLocale(param);
 	}
