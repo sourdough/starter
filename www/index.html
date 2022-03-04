@@ -41,14 +41,14 @@ html:before {
 }
 /* browser support
 future: aspect-ratio; current: accent-color; past: :is() min() ::part @supports selector() */
-@supports (accent-color: blue) { html:before{display:none;} }
+@supports selector(:is(*)) { html:before{display:none;} }
 /* core */
 :root{
 	--bg: #fff;
 	--alt: #ddd;
 	--txt: #000;
 	--cue: #fc0;
-	--ffsans: BlinkMacSystemFont, "Calibri", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Roboto" sans-serif;
+	--ffsans: BlinkMacSystemFont, "Calibri", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Roboto", sans-serif;
 	--ffserif: Georgia, Cambria, serif;
 	--ffmono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Ubuntu Mono", "Roboto Mono", Menlo, Monaco, Consolas, monospace;
 }
@@ -127,6 +127,7 @@ footer a,
 header a{color: var(--txtcolor, #ccc);text-decoration:none;margin-inline-end: 1em;padding:0.2em;text-decoration:none;line-height:1rem;}
 header nav a:is(:focus, :active, :hover){animation:rotate 3s infinite alternate;outline:none;}
 main{
+	font-family: var(--ffserif);
 	padding:1rem 1rem clamp(5vh, 10rem, 20vh);
 	column-gap: 1em;
 	column-width: 25em;
