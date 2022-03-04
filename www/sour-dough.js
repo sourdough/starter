@@ -40,10 +40,19 @@ customElements.define('sour-dough', class SourDough extends LitElement{
 	connectedCallback(){
 		super.connectedCallback();
 		self.addEventListener('vaadin-router-location-changed', this.locationChanged);
+		self.addEventListener('vaadin-router-go', this.locationGo);
 	}
 	disconnectedCallback(){
 		super.disconnectedCallback();
 		self.removeEventListener('vaadin-router-location-changed', this.locationChanged);
+		self.removeEventListener('vaadin-router-go', this.locationGo);
+	}
+	locationGo({type, detail}){
+		console.warn({type, detail});
+		// preserve any options
+		// TODO merge them
+		detail.search = location.search;
+		detail.hash = location.hash;
 	}
 	locationChanged({type, detail}){
 		updateLocaleFromUrl();

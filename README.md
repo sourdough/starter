@@ -11,7 +11,7 @@ includes
 * http service for local development
 
 demo:
-[https://sourdough.github.io/starter/www/](www/)
+[https://sourdough.github.io/starter/www/](https://sourdough.github.io/starter/www/)
 
 https://sourdough.github.io/starter/
 
