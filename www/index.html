@@ -1,27 +1,195 @@
 <!doctype html>
-<html><head>
-<title>sourdough starter demo</title>
-<style>
+<html lang=en><head>
+	<title>sourdough starter demo</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<style>
+/* intl */
+[lang]{direction:ltr;}
+/*
+ar	Arabic
+arc	Aramaic
+dv	Divehi
+fa	Persian
+ha	Hausa
+he	Hebrew
+khw	Khowar
+ks	Kashmiri
+ku	Kurdish
+ps	Pashto
+ur	Urdu
+yi	Yiddish */
+[lang|="ar" i],
+[lang|="arc" i],
+[lang|="dv" i],
+[lang|="fa" i],
+[lang|="ha" i],
+[lang|="he" i],
+[lang|="khw" i],
+[lang|="ks" i],
+[lang|="ku" i],
+[lang|="ps" i],
+[lang|="ur" i],
+[lang|="yi" i]{direction:rtl;}
 
-</style>
+
+
+html:before { 
+	content: "Please update to a recent browser (Chrome, Firefox, Edge or Safari). This one is outdated!";
+	display:block; box-sizing:border-box; background-color: #123; color: #fff; font-size: large; padding: 0; width: 100%; height: 100%; position: fixed; z-index: 98765;
+}
+/* browser support
+future: aspect-ratio; current: accent-color; past: :is() min() ::part @supports selector() */
+@supports (accent-color: blue) { html:before{display:none;} }
+/* core */
+:root{
+	--bg: #fff;
+	--alt: #ddd;
+	--txt: #000;
+	--cue: #fc0;
+	--ffsans: BlinkMacSystemFont, "Calibri", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Roboto" sans-serif;
+	--ffserif: Georgia, Cambria, serif;
+	--ffmono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Ubuntu Mono", "Roboto Mono", Menlo, Monaco, Consolas, monospace;
+}
+@media (prefers-color-scheme: light){
+	:root{
+		--bgcolor: #fff;
+		--altcolor: #ddd;
+		--txtcolor: #000;
+	}
+}
+@media (prefers-color-scheme: dark){
+	:root{
+		--bgcolor: #222;
+		--altcolor: #555;
+		--txtcolor: #fff;
+	}
+}
+@media screen and (max-width: 800px){
+/* smaller */
+	:root{ --msg: '<=800' }
+}
+@media screen and (max-width: 640px){
+/* mobile */
+	:root{ --msg: '<=640' }
+}
+@media screen and (max-width: 320px){
+/* mobile */
+	:root{ --msg: 'min' }
+}
+@media screen and (min-width: 800px){
+/* desktop */
+	:root{ --msg: '>=800' }
+}
+@media screen and (min-width: 1020px){
+/* desktop */
+	:root{ --msg: 'max' }
+}
+
+@media print{
+}
+
+html{background-color:#671;min-width:320px;min-height:320px;}
+body{
+	padding:0; margin:0;
+	background-color:var(--bg,#fff); color:var(--txt, #000);
+	min-width: 100vw; min-height: 100vh;
+	display: flex; flex-direction: column;
+	font-family:var(--ffsans); font-size:1rem; line-height:1.3;
+}
+pre,code{font-family:var(--ffmono);}
+h1,h2,h3,h4,h5,h6{font-size:1rem;margin:.1em 0 .5em 0;font-weight:normal;}
+h1,h3,h5{font-weight:bold;}
+h1,h2{font-size:1.5rem;}
+h5,h6{font-size:.8rem;}
+p{margin-block-end:1em;}
+main :is(a:link, a:visited){color:inherit;text-decoration:underline;}
+main a:is(:focus, :active){outline:auto;outline-offset:.2em;text-decoration:none;}
+main a:hover{background-color:var(--cue);}
+cite{font-style:italic;}
+cite:before{content:' - '}
+header, footer{
+	position:sticky;top:0;display:flex;
+	background-color:var(--bgcolor, rgba(255,255,255,1));
+	color: var(--txtcolor, #777);
+	border-width:0 0 thin 0; border-style:dashed; border-color:var(--altcolor, #ccc);
+	padding:.7em 1rem;
+	align-items: flex-start;
+}
+footer{
+	position:static; border-width:thin 0 0;
+	min-height: clamp(2vh, 8rem, 20vh);
+}
+nav{display:inline-flex;flex-grow: 1;}
+footer a,
+header a{color: var(--txtcolor, #ccc);text-decoration:none;margin-inline-end: 1em;padding:0.2em;text-decoration:none;line-height:1rem;}
+header nav a:is(:focus, :active, :hover){animation:rotate 3s infinite alternate;outline:none;}
+main{
+	padding:1rem 1rem clamp(5vh, 10rem, 20vh);
+	column-gap: 1em;
+	column-width: 25em;
+	flex: 1 1 auto;
+}
+main a:is(:hover, :)
+main p:last-of-type::after{
+	content: "❦";
+}
+section::after{content: "§"}
+
+body::after{
+	content:var(--msg);
+	position:fixed;
+	display: block;
+	right:1rem;
+	bottom:1rem;
+	background:rgba(255,255,255,0.5);
+	padding: 0.2em;
+	font-size:small;
+}
+@keyframes pulse{ 0% {opacity:1;} 50% {opacity:0.7;} 100% {opacity:1;} }
+@keyframes rotate{ 
+	0% {transform:rotate(0deg);} 
+	50% {transform:rotate(360deg);} 
+	100% {transform:rotate(0deg);} 
+}
+	</style>
 </head><body>
-
-<sour-dough>bread</sour-dough>
+<header>
+	<a href="/">header</a>
+	<nav>
+<a href="#">✶</a>
+<a href="#">✷</a>
+<a href="#">✡︎</a>
+<a href="#">✢</a>
+<a href="#">✤</a>
+<a href="#">☞</a>
+</nav>
+	<a href="/login">login</a>
+	<sour-locale>🌐</sour-locale>
+</header>
+<main outlet>
+	<noscript><p>JavaScript is required for this website--please enable JavaScript.</p></noscript>
+	<sour-dough>
+<a href=#>link test</a>
+</sour-dough>
+</main>
+<footer>
+<nav><a href="/contact">contact</a></nav>
+</footer>
 <script type="module">
-import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
-
-customElements.define('sour-dough', class SourDough extends LitElement{
-	static get styles(){
-		return css`
-			:host{display:block;}
-		`;
-	}
-	constructor(){
-		super();
-	}
-	render(){
-		return html`baked <slot>...</slot>`;
-	}
-});
+/*
+navigator.serviceWorker.register('/worker.js', {scope:'/'});
+.then(worker=>{
+	console.warn(`[worker] 🛠🗜 registered`, {worker});
+	worker.active?.postMessage({cache: location.origin + location.pathname})
+})
+.catch(error=>{
+	const { protocol, host } = location;
+	const wrong = protocol !== 'https:' && !host.startsWith('127.0.0.1') && !host.startsWith('localhost');
+	console.warn(`[worker] 🧨 failed to register; ${ wrong ? 'requires localhost or https':''}`, {error});
+})
+;
+*/
+import './sour-dough.js';
 </script>
-
+</body>
