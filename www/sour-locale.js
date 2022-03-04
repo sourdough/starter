@@ -21,6 +21,7 @@ customElements.define('sour-locale', class SourLocale extends LitElement{
 		this.localeList = localeList;
 		this.userLocale = userLocale;
 		updateWhenLocaleChanges(this);
+		this._localize = this._localize.bind(this);
 	}
 	connectedCallback(){
 		super.connectedCallback();
@@ -33,9 +34,11 @@ customElements.define('sour-locale', class SourLocale extends LitElement{
 		super.disconnectedCallback();
 		self.removeEventListener('lit-localize-status', this._localize);
 	}
-	_localize(event){
-		console.log(event.type, {event});
-		document.documentElement.lang = event.detail.readyLocale;
+	_localize({type, detail}){
+		console.log(type, {detail});
+		const { readyLocale } = detail;
+		document.documentElement.lang = readyLocale;
+		this.lang = readyLocale;
 	}
 	_change(event){
 		console.log(event.type, {event}, getLocale());
