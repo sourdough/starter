@@ -159,26 +159,35 @@ body::after{
 	</style>
 </head><body>
 <header>
+<sour-part msg=site.header>
 	<a href="/">header</a>
 	<nav>
-<a href="#">✶</a>
-<a href="#">✷</a>
-<a href="#">✡︎</a>
-<a href="#">✢</a>
-<a href="#">✤</a>
-<a href="#">☞</a>
-</nav>
+		<a href="#">✶</a>
+		<a href="#">✷</a>
+		<a href="#">✡︎</a>
+		<a href="#">✢</a>
+		<a href="#">✤</a>
+		<a href="#">☞</a>
+	</nav>
 	<a href="/login">login</a>
 	<sour-locale>🌐</sour-locale>
+</sour-part>
 </header>
-<main outlet>
-	<noscript><p>JavaScript is required for this website--please enable JavaScript.</p></noscript>
-	<sour-dough>
-<a href=#>link test</a>
+<main>
+<noscript><p>JavaScript is required for this website--please enable JavaScript.</p></noscript>
+<sour-dough outlet>
+	links <a href=#ok>#ok</a>
+	<a href=/page>page</a>
+	<a href=/page1>1</a>
+	<a href=/page2>2</a>
+	<a href=/page3>3</a>
+	<a href=/page4>4?</a>
 </sour-dough>
 </main>
 <footer>
-<nav><a href="/contact">contact</a></nav>
+<sour-part msg=site.footer>
+	<nav><a href="/contact">contact</a></nav>
+</sour-part>
 </footer>
 <script type="module">
 /*
