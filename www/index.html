@@ -150,7 +150,9 @@ body::after{
 	padding: 0.2em;
 	font-size:small;
 }
-@keyframes pulse{ 0% {opacity:1;} 50% {opacity:0.7;} 100% {opacity:1;} }
+[outlet] .entering { animation: pulse 0.3s; }
+[outlet] .leaving { display:none; }
+@keyframes pulse{ 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
 @keyframes rotate{ 
 	0% {transform:rotate(0deg);} 
 	50% {transform:rotate(360deg);} 
@@ -187,11 +189,18 @@ body::after{
 <footer>
 <sour-part msg=site.footer>
 	<nav><a href="/contact">contact</a></nav>
+
+	links <a href=#ok>#ok</a>
+	<a href=/page>page</a>
+	<a href=/page1>1</a>
+	<a href=/page2>2</a>
+	<a href=/page3>3</a>
+	<a href=/page4>4?</a>
 </sour-part>
 </footer>
 <script type="module">
 /*
-navigator.serviceWorker.register('/worker.js', {scope:'/'});
+navigator.serviceWorker.register('/worker.js', {scope:'/'})
 .then(worker=>{
 	console.warn(`[worker] 🛠🗜 registered`, {worker});
 	worker.active?.postMessage({cache: location.origin + location.pathname})
@@ -206,3 +215,4 @@ navigator.serviceWorker.register('/worker.js', {scope:'/'});
 import './sour-dough.js';
 </script>
 </body>
+</html>

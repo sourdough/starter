@@ -17,6 +17,8 @@ customElements.define('page-common', class extends LitElement{
 	render(){
 		console.log('render...page', getLocale());
 		const id = location.pathname;
-		return html`page... "${ id }" ${ msg('...???', {id, desc: 'content for page by pathname'}) }`;
+		return html`page... "${ id }" ${ msg('...', {id, desc: 'content for page by pathname'}) }
+${ msg('text', {id: 'demo.text.sample', desc: 'some text to show'}) }
+		`;
 	}
 });

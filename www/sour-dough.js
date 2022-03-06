@@ -5,7 +5,6 @@ import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
 
 import { msg, updateWhenLocaleChanges, localeList, localeDictionary, setLocale, getLocale, updateLocaleFromUrl } from './locales.js';
 
-// TODO
 const routes = [
 { path:'/', animate: true, children: [
 	{path: '/', component: 'page-common', action: async ()=> import('./page-common.js') },
