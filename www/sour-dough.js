@@ -7,7 +7,7 @@ import { msg, updateWhenLocaleChanges, localeList, localeDictionary, setLocale, 
 
 const routes = [
 { path:'/', animate: true, children: [
-	{path: '/', component: 'page-common', action: async ()=> import('./page-common.js') },
+	{path: '/(starter/www/)?', component: 'page-common', action: async ()=> import('./page-common.js') },
 	{path: '/(page[1-3])', component: 'page-common', action: async ()=> import('./page-common.js') },
 	{path: '/contact', component: 'page-contact', action: async ()=> import('./page-contact.js') },
 	// 404
