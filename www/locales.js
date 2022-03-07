@@ -36,8 +36,11 @@ lang = langFromUrl();
 const {getLocale, setLocale} = configureLocalization({
 	sourceLocale,
 	targetLocales: Object.keys(localeDictionary),
+	/* TODO look into loading locales in parts, 
+		is this simply the initial set of utils for this?
+		load the rest in each respective module?
+		look through the source....TODO */
 	loadLocale: (locale) => {
-		console.log('loadLocale',{locale});
 		return import(`./locale.${locale}.js`);
 	}
 });
@@ -56,11 +59,11 @@ export const templates = {
 */
 //////////////
 
-async function setLocaleUrl(want){
+async function setLocaleUrl(want, ...args){
 	const locale = getLocale();
 	const url = new URL(location);
 	const param = url.searchParams.get('lang');
-	if(want === locale || !localeDictionary[ want ]){
+	if(!localeDictionary[ want ] || (want === locale)){
 		// no change
 		return;
 	}

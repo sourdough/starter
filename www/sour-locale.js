@@ -1,7 +1,7 @@
 import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
 import { msg, updateWhenLocaleChanges, localeList, localeDictionary, setLocale, getLocale, userLocale, updateLocaleFromUrl } from './locales.js';
 
-customElements.define('sour-locale', class SourLocale extends LitElement{
+customElements.get('sour-locale') || customElements.define('sour-locale', class SourLocale extends LitElement{
 	static get properties(){
 		return {
 			lang: String,

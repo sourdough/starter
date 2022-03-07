@@ -15,8 +15,7 @@ const routes = [
 ] }
 ];
 
-
-customElements.define('sour-dough', class SourDough extends LitElement{
+customElements.get('sour-dough') || customElements.define('sour-dough', class SourDough extends LitElement{
 	static get properties(){
 		return {
 		}
