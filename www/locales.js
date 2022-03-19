@@ -41,7 +41,7 @@ const {getLocale, setLocale} = configureLocalization({
 		load the rest in each respective module?
 		look through the source....TODO */
 	loadLocale: (locale) => {
-		return import(`./locale.${locale}.js`);
+		return import(`./locale/app.${locale}.js`);
 	}
 });
 function langFromUrl(location=self.location){
