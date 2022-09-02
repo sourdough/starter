@@ -1,15 +1,15 @@
 /*
 simple http service for local development;
-SPA behavior when no file extension or trailing/ is present (returns the wwwroot index)
+SPA behavior when no file extension present (returns the wwwroot index)
 uses Deno 🦕 more at https://deno.land
 
 a few example to run it:
 
 PORT=8777 && deno run --allow-read=./ --allow-net=0.0.0.0:$PORT ./tools/http.js -port=$PORT -www=./www
 
-deno run --allow-read --allow-net ./tools/http.js
+deno run --allow-read=./ --allow-net=0.0.0.0:8000 ./tools/http.js -www=./
 
-TODO possible reload on file watching patterns
+TODO reload on file watching patterns
 
 https://deno.land/x/oak
 https://deno.land/manual/runtime/program_lifecycle
@@ -30,11 +30,9 @@ const config = {
 	,expires: 'private, max-age=1, s-maxage=1'
 };
 Deno.args.reduce(function _options_(config, arg, i){
-console.log(i, arg);
 	// allow -name=value or -name:value, with any leading '-'
 	const parts = arg.match(/^-+([a-z][a-z0-9]+)(?:[=:]?(.+))?/i);
 	if(parts){
-console.log(i, parts);
 		const [all, name, value = ''] = parts;
 		// can only set predefined properties
 		if(config[name] === undefined){
@@ -127,22 +125,18 @@ app.use(async (context, next) => {
 		// adjust response to fit requested mimetype
 		let ext = paf.extname(pathname).toLowerCase();
 
-		if(!ext && !pathname.endsWith('/')){
+		if(404 === status && !ext){ // && !pathname.endsWith('/')){
 			// single-page-app SPA pattern
 			await send(context, config.index, config);
+			response.status = 200;
 		}else{
 			// respect error status codes set by other middleware
-			if((response.status || 0) >= 400){
-				status = response.status;
+			if((response.status || 0) < 400){
+				response.status = status;
 			};
 			log(status, request.method, request.url.href, request.user, request.headers.get('user-agent'), request.ip);
 
-			// drop leading '.'
-			let type = mimetypes[ ext.substring(1) ];
-			if(!type){
-				type = mimetypes.html;
-				ext = '.html';
-			}
+			let type = mimetypes[ ext ] || mimetypes[ ( ext = 'html' ) ];
 			response.type = type;
 
 			// short caches on errors
@@ -154,9 +148,11 @@ app.use(async (context, next) => {
 				response.headers.set('X-appmsg', msg);
 			};
 
+			// setting a body resets the status to 200 oak/issues/448
+			const _status = response.status;
 			// send an appropriate response
 			switch(ext){
-			case '.html':
+			case 'html':
 			response.body = `<!doctype html>
 <html><body>
 <p>${status} ${ Status[status] || 'Internal Server Error' }</p>
@@ -165,8 +161,8 @@ app.use(async (context, next) => {
 			default:
 			response.body = '';
 			}
-			// setting a body resets the status to 200 oak/issues/448
-			response.status = status;
+			// restore status
+			response.status = _status;
 		}
 	}
 });
