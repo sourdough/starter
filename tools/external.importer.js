@@ -3,13 +3,19 @@ load a list of urls from a file/stdin and dump them into the destination (creati
 * currently only supports unpkg.com
 * see deno install info at https://deno.land as needed then
 * run from root of www project, like cd ~/path/to/wwwroot with:
-$ deno run --allow-env --allow-read=./ --allow-write=./www/external --allow-net='unpkg.com' ./tools/external.importer.js -file='./tools/external.dependencies.js' -dump=./www/external/
 
-file external.dependencies.js has something like:
+$ deno run --allow-env --allow-read=./ --allow-write=./www/wildtype/ --allow-net='cdn.jsdelivr.net' ./tools/external.importer.js -file=./tools/external.dependencies.js -dump=./www/wildtype/
+
+$ deno run --allow-env --allow-read=./ --allow-write=./www/wildtype/ --allow-net='cdn.jsdelivr.net,raw.githubusercontent.com' https://raw.githubusercontent.com/sourdough/starter/main/tools/external.importer.js -file=./tools/external.dependencies.js -dump=./www/wildtype/ --verbose=true
+
+
+file external.dependencies.js has something like (https://github.com/sourdough/starter/blob/main/tools/external.dependencies.js):
+
 export const dependencies = [
-	'https://unpkg.com/lit@2.1.1?module',
-	'https://unpkg.com/lit@2.1.1/directives/async-append.js?module',
+	'https://cdn.jsdelivr.net/npm/lit@3.0.0/index.js/+esm',
+	'https://cdn.jsdelivr.net/npm/lit@3.0.0/directives/async-append.js/+esm',
 ];
+
 
 TODOs
 * add feature for reporting latest major, minor, point releases avaialable for a given list of urls; show status for all the urls requested
@@ -20,6 +26,7 @@ TODOs
 import * as paf from "https://deno.land/std/path/mod.ts";
 import * as fs from "https://deno.land/std/fs/mod.ts";
 
+let fetch_count = 0;
 const time = Date.now();
 const script = new URL(import.meta.url).pathname;
 // NOTE Deno.env requires --allow-env flag
@@ -37,6 +44,9 @@ const config = {
 	// TODO show what provided url list comes back with for unversioned and partially versioned redirect for the cdn
 	outdated: false,
 };
+
+console.warn({cwd:Deno.cwd()});
+console.log(config);
 
 Deno.args.reduce(function _options_(config, arg, i){
 	// allow -name=value or -name:value, with any leading '-'
@@ -179,6 +189,8 @@ function progress(){
 
 function req(url){
 	const dep = {req: null, res: null, body: '', url};
+	fetch_count += 1;
+	console.log(`${ fetch_count } ${ url }`);
 	dep.req = fetch(url)
 		.then(res=>{
 			dep.res = res;
@@ -210,14 +222,18 @@ function req(url){
 	'https://unpkg.com/vanilla-colorful@0.6.2/rgba-color-picker.js?module',
 	'https://unpkg.com/@vaadin/router@1.7.4?module',
 
+	"https://cdn.jsdelivr.net/npm/lit@3.0.0/index.js/+esm",
+	not sure what to do with content ./npm/lit/3.0.0/index.js/_esm
+
 	clean url and derive values
 	/thing@1.2.3... /thing@^1.2.3... /@org/thing@1.2.3...
 	-> unversioned:   -> /thing... /@org/thing...
 	-> versioned:     -> /thing/1.2.3... /@org/thing/1.2.3...
 	-> name, version: -> thing, 1.2.3; @org/thing, 1.2.3
+
  */
 function urlToPath(url){
-	const parts = url.pathname.replace(/[?#].*$/,'').replace(/[^@\/a-z0-9._-]/gi, '_').match(/^\/(.+)@_?([0-9]+\.[0-9]+\.[0-9]+)(.*)$/i);
+	const parts = url.pathname.replace(/[?#].*$/,'').replace(/^\/npm\//,'/').replace(/\/\+esm$/,'').replace(/[^@\/a-z0-9._-]/gi, '_').match(/^\/(.+)@_?([0-9]+\.[0-9]+\.[0-9]+)(.*)$/i);
 	if(!parts){
 		// fail fast
 		throw new Error(`unexpected url pattern "${ url }" is unlike /name@1.2.3/path`);
@@ -229,6 +245,11 @@ function urlToPath(url){
 	const versioned = `./${ name }/${ version }${ rest }`;
 	const ext = paf.extname(rest).toLowerCase();
 	const www = "/" + paf.relative(config.wwwroot, paf.resolve(config.wwwroot, relative, ext.endsWith('.js') ? versioned : (unversioned + '.js')));
+	const wwwbasename = paf.basename(www);
+	const wwwext = paf.extname(www).toLowerCase();
+
+	const wwwversioned = "/" + paf.relative(config.wwwroot, paf.resolve(config.wwwroot, relative, versioned)) + (ext === '' ? '/'+wwwbasename:'');
+
 	const semver = version.split('.').map(n=>n*1);
 	return {
 		unversioned,
@@ -236,7 +257,10 @@ function urlToPath(url){
 		name,
 		version,
 		ext,
+		wwwbasename,
+		wwwext,
 		www,
+		wwwversioned,
 		semver,
 		path: url.pathname,
 	};
@@ -252,23 +276,26 @@ async function rewriter(txt, url, oururl){
 	const p1 = urlToPath(url1);
 	const url2 = new URL(url);
 	const p2 = urlToPath(url2);
-
+//console.warn({url1,p1,url2,p2});
 	// include source in top comment
 	// TODO strip and report unknown/disallowed characters
 	const output = p2.ext !== '.js' ? txt : `/* ${ url } */ ` + txt.replace(modulePattern, function(all, first, modl){
 		const _url = new URL(modl, url);
 		const { path, unversioned, versioned, name, version, ext, www } = urlToPath(_url);
 
+		// first section simply adds urls (imports/exports) to queue and adjusts for what the path will become locally
 		if(/^https?:/.test(modl)){
 			// retrieve it after
-			queue.add(modl);
+			queue.add( modl );
 
 			// rewrite to use local copy from same external file dump
 			const local = paf.relative(paf.dirname(p2.www), www);
 			// for unversioned write a js file later (when resolved) that points from bare reference to the js file resolved
 			if(verbose){
 				console.warn(`found ^http> ${ first }"${ local }"; // in ${ url }`);
+				console.warn(`queue added ${ modl }`);
 			}
+
 			return `${ first }"${ local }"`;
 		}else if(/^\./.test(modl)){
 		/*
@@ -279,7 +306,11 @@ async function rewriter(txt, url, oururl){
 			queue.add( modlurl.href );
 			let local = modl.replace(/\?.*$/,'');
 			if(verbose){
-				console.warn(`found ^. > ${ first }"${ local }"; // in ${ url }`);
+				console.warn(
+`
+found ^. > ${ first }"${ local }"; // in ${ url }
+queue added ${ modlurl.href }
+`				);
 			}
 			// leave as-is, sans get args '../any.js?args' => '../any.js'
 			if(!ext){
@@ -288,9 +319,45 @@ async function rewriter(txt, url, oururl){
 				local += '.js';
 			}
 			return `${ first }"${ local }"`;
+		}else if(modl.startsWith('/')){
+
+			const _modl = modl.replace(/^\/npm\//,'/').replace(/\?.*$/,'').replace(/\/+esm$/,'');
+			const _url2 = new URL(_modl, url);
+			const { path, unversioned, versioned, name, wwwbasename, version, ext, wwwext, www, wwwversioned } = urlToPath( _url );
+			const modlurl = new URL(modl, url2);
+			if(!ext){
+				let ending = '';
+				const _esm_ = '/+esm';
+				let { pathname } = modlurl;
+				if(pathname.endsWith(_esm_)){
+					ending += _esm_;
+					pathname = pathname.substr(0, pathname.length - (_esm_.length))
+				}
+				if(pathname.endsWith('/')){
+					pathname = pathname.substr(0, pathname.length - 1);
+				}
+				modlurl.pathname = `${ pathname }/${ wwwbasename }${ ending }`;
+			}
+			queue.add( modlurl.href );
+
+			// rewrite to use local copy from same external file dump
+			const local = paf.relative(paf.dirname(p2.www), www);
+			const localversioned = paf.relative(paf.dirname(p2.www), wwwversioned);
+			if(verbose){
+				console.warn(
+`
+found ^/ in ${ url }
+queue added ${ modlurl.href }
+${ first }"${ local }";
+${ first }"${ localversioned }";
+`				);
+				//console.warn(`---`,{url,modl,all,versioned,path,name,wwwbasename,ext,wwwext,www,wwwversioned, local, localversioned, p2:p2.www, p1:p1.www, url1, url2, _url2, _url});
+			}
+			
+			return `${ first }"${ localversioned }"`;
 		}else{
 			if(verbose){
-				console.warn(`found unknown ignored module > ${ all } // in ${ url } `);
+				console.warn(`found unknown module > ${ all } // in ${ url } `);
 			}
 			return all;
 		}
@@ -378,7 +445,7 @@ async function rewriter(txt, url, oururl){
 		if(p2.ext && output){
 			writeFileSync(paf.resolve(config.wwwroot, relative, p2.versioned), output);
 		}else{
-			throw new Error(`missing extension and not sure what to do with content ${ p2.versioned }`);
+			throw new Error(`missing extension and not sure what to do with content "${ p2.versioned }"`);
 		}
 	}
 
