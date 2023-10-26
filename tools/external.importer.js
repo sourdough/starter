@@ -207,7 +207,8 @@ function req(url){
 		.catch(res=>{
 			dep.res = res;
 			console.error(res);
-			return Promise.reject(dep);
+			console.warn(dep);
+			return dep;//Promise.reject(dep);
 		})
 		;
 	return dep;
@@ -281,7 +282,7 @@ async function rewriter(txt, url, oururl){
 	// TODO strip and report unknown/disallowed characters
 	const output = p2.ext !== '.js' ? txt : `/* ${ url } */ ` + txt.replace(modulePattern, function(all, first, modl){
 		const _url = new URL(modl, url);
-		const { path, unversioned, versioned, name, version, ext, www } = urlToPath(_url);
+		const { path, unversioned, versioned, name, version, ext, www, wwwbasename, wwwext, wwwversioned } = urlToPath(_url);
 
 		// first section simply adds urls (imports/exports) to queue and adjusts for what the path will become locally
 		if(/^https?:/.test(modl)){
@@ -303,6 +304,13 @@ async function rewriter(txt, url, oururl){
 		=> https://unpkg.com/lit-html@2.1.1/directive.js?module
 			*/
 			const modlurl = new URL(modl, url2);
+			if(!ext && wwwext){
+			/* add extension based on best guess
+			 https://unpkg.com/@supabase/storage-js@2.5.4/dist/module/lib/version?module
+			 https://unpkg.com/@supabase/storage-js@2.5.4/dist/module/lib/version.js?module
+			 * */
+				modlurl.pathname += wwwext;
+			}
 			queue.add( modlurl.href );
 			let local = modl.replace(/\?.*$/,'');
 			if(verbose){
@@ -318,6 +326,7 @@ queue added ${ modlurl.href }
 			// otherwise fix manually--beyond the scope of this script
 				local += '.js';
 			}
+
 			return `${ first }"${ local }"`;
 		}else if(modl.startsWith('/')){
 
@@ -445,7 +454,7 @@ ${ first }"${ localversioned }";
 		if(p2.ext && output){
 			writeFileSync(paf.resolve(config.wwwroot, relative, p2.versioned), output);
 		}else{
-			throw new Error(`missing extension and not sure what to do with content "${ p2.versioned }"`);
+			console.warn(new Error(`missing extension and not sure what to do with content "${ p2.versioned }"`));
 		}
 	}
 
