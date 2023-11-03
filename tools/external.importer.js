@@ -38,15 +38,14 @@ const config = {
 	dump: './www/external/',
 	wwwroot: pwd,
 	help: false,
+	outdated: false,
+	versions: false,
 
 	// TODO read a package.json file and output a list of urls for a cdn
 	package: '',
 	// TODO show what provided url list comes back with for unversioned and partially versioned redirect for the cdn
 	outdated: false,
 };
-
-console.warn({cwd:Deno.cwd()});
-console.log(config);
 
 Deno.args.reduce(function _options_(config, arg, i){
 	// allow -name=value or -name:value, with any leading '-'
@@ -90,6 +89,7 @@ Deno.args.reduce(function _options_(config, arg, i){
 
 }, config);
 
+console.log(`config`,{cwd:Deno.cwd(), ...config});
 
 const dump = paf.resolve(paf.resolve(config.wwwroot), config.dump);
 const relative = './' + paf.relative(config.wwwroot, dump);
@@ -108,6 +108,9 @@ if(config.file){
 				if(!url || !url.startsWith('http')) return;
 				queue.add(url);
 			});
+		}).catch(res=>{
+			console.warn(res);
+			config.help = true;
 		});
 	}
 }
@@ -125,11 +128,38 @@ if(!queue.size || !config.dump || config.help){
 
 	options begin with '-' ${ Object.entries(config).map(([k,v])=>`-${k}='${v}' (${typeof v})`).join(', ') }
 
-	TODO improve doc: verbose, pwd, file, etc;
+	--verbose
+	--versions
+	--outdated
+	--help
 
 	${ config.file ? `NOTE file was empty: ${ config.file }`:'' }
 	${ !config.dump ? `NOTE no destination provided by 'dump'`:'' }
 	`);
+
+	Deno.exit(0);
+}else if(config.versions){
+	console.log(`versions for ${ queue.size } items`);
+	
+	const vers = new Map();
+	const list = versions(queue).map(
+		({url, href, pathname, name, version, path, prefix, suffix, base})=>{
+			let v = vers.get(name);
+			if(!v){
+				v = {list: new Set(), base, for: []};
+				vers.set(name, v);
+			}
+			v.list.add(version);
+			v.for.push(href);
+
+			return {href, name, version, path, base, req: `${ base }${ path }`};
+		});
+	if(config.verbose) console.log(list);
+	console.log(vers);
+
+	Deno.exit(0);
+}else if(config.outdated){
+	console.log(`checking versions for ${ queue.size } items`);
 
 	Deno.exit(0);
 }else{
@@ -141,6 +171,20 @@ if(!queue.size || !config.dump || config.help){
 		`${urls.size} urls in ${ Date.now() - time }ms (${ list.size } items)`
 	);
 }
+
+function versions(list=queue){
+	return Array.from(list).map((href)=>{
+		const url = new URL(href);
+		let pathname, all, prefix, suffix, name, version, path;
+		pathname = url.pathname.replace(/^\/npm\//,'/').replace(/\/\+esm$/,'');
+		[all, prefix=''] = url.pathname.match(/^(\/(?:npm|gh)\b)/) ?? [];
+		[all, suffix=''] = url.pathname.match(/(\/\+esm)$/) ?? [];
+		[all, name = '', version = '', path = ''] = pathname.match(/^\/(.+)@(\d+\.\d+\.\d+)(.*)/) ?? [];
+		const base = url.origin + ( version ? `${prefix}/${ name }` : pathname );
+		return {url, href, pathname, name, version, path, prefix, suffix, base};
+	});
+};
+
 
 function advance(dep){
 	active.delete(dep.req);
