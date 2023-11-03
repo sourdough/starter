@@ -5,9 +5,9 @@ export const dependencies = [
 'https://unpkg.com/element-internals-polyfill@1.3.9/dist/index.js',
 //
 'https://cdn.jsdelivr.net/npm/@lit/localize@0.12.1/lit-localize.js',
-'https://unpkg.com/@lit/context@1.0.1/index.js',
+'https://unpkg.com/@lit/context@1.0.1/index.js?module',
 'https://unpkg.com/@lit/task@1.0.0/index.js',
-// lit v3.0.0 on 2023-10-25
+// 
 'https://cdn.jsdelivr.net/npm/lit@3.0.2/index.js/+esm',
 'https://cdn.jsdelivr.net/npm/lit@3.0.2/directives/async-append.js/+esm',
 'https://cdn.jsdelivr.net/npm/lit@3.0.2/directives/async-replace.js/+esm',

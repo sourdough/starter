@@ -292,7 +292,7 @@ function progress(){
 		}
 	}
 
-	return active.size ? Promise.allSettled(Array.from(active))
+	return active.size ? Promise.all(Array.from(active))
 		.then(deps=>{
 			if(verbose){
 				console.log('success', deps.length);
