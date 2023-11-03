@@ -144,6 +144,7 @@ if(!queue.size || !config.dump || config.help){
 	const vers = new Map();
 	const list = versions(queue).map(
 		({url, href, pathname, name, version, path, prefix, suffix, base})=>{
+			if(!name) console.warn(`ambiguous name "${ name }"`);
 			let v = vers.get(name);
 			if(!v){
 				v = {list: new Set(), base, for: []};
@@ -152,7 +153,7 @@ if(!queue.size || !config.dump || config.help){
 			v.list.add(version);
 			v.for.push(href);
 
-			return {href, name, version, path, base, req: `${ base }${ path }`};
+			return {href, name, version, pathname, path, prefix, suffix, base, req: `${ base }${ path }`};
 		});
 	if(config.verbose) console.log(list);
 	console.log(vers);
@@ -160,6 +161,80 @@ if(!queue.size || !config.dump || config.help){
 	Deno.exit(0);
 }else if(config.outdated){
 	console.log(`checking versions for ${ queue.size } items`);
+
+//console.warn(`versionDiff`,versionDiff([ 1, 2, 0 ], [ 1, 2, 0 ]));
+//Deno.exit(0);
+	const reqs = new Map();
+	const vers = new Map();
+	const list = versions(queue).map(
+		({url, href, pathname, name, version, path, prefix, suffix, base})=>{
+			if(!name) console.warn(`ambiguous name "${ name }"`);
+
+			let v = vers.get(name);
+			if(!v){
+				v = {list: new Set(), base, for: []};
+				vers.set(name, v);
+				reqs.set(base, null);
+			}
+			v.list.add(version);
+			v.for.push(href);
+
+			return {href, name, version, path, base, req: `${ base }${ path }`};
+		});
+	if(config.verbose) console.log(list);
+
+	for (const v of vers){
+		const [name, ver] = v;
+		console.log(name, ver.base);
+		let req = reqs.get(ver.base);
+		if(!req){
+			req = fetch(ver.base)
+			.then(async (res)=>{
+				let latest;
+				if(res.redirected){
+					latest = hrefVersion(res.url);
+				}else{
+					const text = await res.text();
+					const part = text.match(/[\s\S]Original file: ([^\s]+)/)?.[1] ?? res.url;
+					const url = new URL(part, res.url);
+					latest = hrefVersion(url.href);
+				}
+				ver.latest = latest;
+				ver._res = res;
+				return ver;
+			})
+			.catch(console.error)
+			;
+
+			reqs.set(ver.base, req);
+		}
+		ver._req = req;
+	}
+	await Promise.allSettled(reqs.values());
+
+	console.log(`
+done with ${reqs.size} items
+	`, );
+
+	const toUpdate = [];
+
+	vers.forEach((val,key)=>{
+		const vers = Array.from(val.list).map(vvversion).filter(v=>v.length >= 3);
+		vers.sort(versionDiff);
+		const latest = vvversion(val.latest.version);
+		const last = vers[vers.length - 1];
+		const mostRecentCheck = vers.length ? versionDiff(latest, last) : Infinity;
+		const isMostRecent = mostRecentCheck === 0;
+		const base = val.base;
+		const { ok, redirected, status, url } = val._res;
+		if(config.verbose) console.log({name:key, versions:vers.map(v=>v.join('.')),latest:latest.join('.'),mostRecentCheck,isMostRecent, base, url, ok, redirected, status, for:val.for});
+		if(!isMostRecent) toUpdate.push({base, url, latest:latest.join('.'), for:val.for});
+	});
+	if(toUpdate.length){
+		console.log(`please update:`, toUpdate);
+	}else{
+		console.log(`everything looks current (use -verbose option for more details)`);
+	}
 
 	Deno.exit(0);
 }else{
@@ -172,17 +247,21 @@ if(!queue.size || !config.dump || config.help){
 	);
 }
 
+function hrefVersion(href){
+	//https://unpkg.com/@supabase/supabase-js@2.38.4/dist/umd/supabase.js
+	const url = new URL(href);
+	let pathname, all, prefix, suffix, name, version, path;
+	pathname = url.pathname.replace(/^\/npm\//,'/').replace(/\/\+esm$/,'');
+	[all, prefix=''] = url.pathname.match(/^(\/(?:npm|gh)\b)/) ?? [];
+	[all, suffix=''] = url.pathname.match(/(\/\+esm)$/) ?? [];
+	[all, name = '', version = '', path = ''] = pathname.match(/^\/(.+)@(\d+\.\d+\.\d+)(.*)/) ?? [];
+
+	const base = url.origin + ( version ? `${prefix}/${ name }` : `${prefix}${pathname}` );
+
+	return {url, href, pathname, name, version, path, prefix, suffix, base};
+}
 function versions(list=queue){
-	return Array.from(list).map((href)=>{
-		const url = new URL(href);
-		let pathname, all, prefix, suffix, name, version, path;
-		pathname = url.pathname.replace(/^\/npm\//,'/').replace(/\/\+esm$/,'');
-		[all, prefix=''] = url.pathname.match(/^(\/(?:npm|gh)\b)/) ?? [];
-		[all, suffix=''] = url.pathname.match(/(\/\+esm)$/) ?? [];
-		[all, name = '', version = '', path = ''] = pathname.match(/^\/(.+)@(\d+\.\d+\.\d+)(.*)/) ?? [];
-		const base = url.origin + ( version ? `${prefix}/${ name }` : pathname );
-		return {url, href, pathname, name, version, path, prefix, suffix, base};
-	});
+	return Array.from(list).map(hrefVersion);
 };
 
 
@@ -213,7 +292,7 @@ function progress(){
 		}
 	}
 
-	return active.size ? Promise.all(Array.from(active))
+	return active.size ? Promise.allSettled(Array.from(active))
 		.then(deps=>{
 			if(verbose){
 				console.log('success', deps.length);
@@ -295,7 +374,7 @@ function urlToPath(url){
 
 	const wwwversioned = "/" + paf.relative(config.wwwroot, paf.resolve(config.wwwroot, relative, versioned)) + (ext === '' ? '/'+wwwbasename:'');
 
-	const semver = version.split('.').map(n=>n*1);
+	const semver = vvversion(version);
 	return {
 		unversioned,
 		versioned,
@@ -510,12 +589,23 @@ function writeFileSync(path, content){
 	Deno.writeTextFileSync(path, content);
 }
 
+/*
+const foo = [[1,2,3],[3,4,5],[11,12,13], [11,0,0], [0,0,0]];
+foo.sort(versionDiff);
+console.log({foo}); =>  [0,0,0], [1,2,3], [3,4,5], [11,0,0], [11,12,13]
+
+
+const foo = [versionDiff([0,0,1], [3,4,5]), versionDiff([7,0,1], [1,2,3]), versionDiff([1,2,3],[1,2,3])];
+console.log({foo}); // [-3, 6, 0]
+
+ * */
 function versionDiff(a, b){
 // a & b like [1,2,3] (derived from '1.2.3')
 // 0 === same version
 // > 0 a newer than b, b is older
 // < 0 a older than b, b is newer
 	let d = 0;
+	if(!a || !b) console.warn({a,b});
 	for(let i = 0;i<3;i++){
 		d = a[i] - b[i];
 		if(d !== 0){
@@ -523,4 +613,8 @@ function versionDiff(a, b){
 		}
 	}
 	return d;
+}
+
+function vvversion(semver=''){
+	return (semver.split('.')).map(n=>Number(n) || 0);
 }
