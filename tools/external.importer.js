@@ -43,8 +43,6 @@ const config = {
 
 	// TODO read a package.json file and output a list of urls for a cdn
 	package: '',
-	// TODO show what provided url list comes back with for unversioned and partially versioned redirect for the cdn
-	outdated: false,
 };
 
 Deno.args.reduce(function _options_(config, arg, i){
