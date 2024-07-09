@@ -23,8 +23,12 @@ TODOs
 * add feature for package.json to print out file list from dependency values
 * possibly add integrity checks (for unpkg ?meta option provides json .integrity field on any file) for some type of reporting, if that has value (needs more complete definition); perhaps include SRI output to file for other features/applications
 */
-import * as paf from "https://deno.land/std/path/mod.ts";
-import * as fs from "https://deno.land/std/fs/mod.ts";
+// https://deno.land/std/path/mod.ts
+// https://deno.land/std/fs/mod.ts
+// import * as paf from "https://jsr.io/@std/path/0.225.2/posix/mod.ts";
+// import * as fs from "https://jsr.io/@std/fs/0.229.3/mod.ts";
+import * as paf from "jsr:@std/path/posix";
+import * as fs from "jsr:@std/fs";
 
 let fetch_count = 0;
 const time = Date.now();

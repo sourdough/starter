@@ -17,8 +17,8 @@ https://doc.deno.land/builtin/stable
 
 EOL.LF .CRLF see https://deno.land/std/fs
 */
-import * as paf from "https://deno.land/std/path/mod.ts";
-import { Application, Router, HttpError, send, Status } from "https://deno.land/x/oak/mod.ts";
+import * as paf from "jsr:@std/path";
+import { Application, Router, HttpError, send, Status } from "jsr:@oak/oak";
 
 const script = new URL(import.meta.url).pathname;
 const config = {
