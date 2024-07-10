@@ -30,6 +30,7 @@
 	"tasks": {
 		"hi": "deno eval 'console.log(`hello world`)'",
 		"www-outdated": "deno run --allow-env --allow-read=../ --allow-write=../www/wildtype/ --allow-net='unpkg.com,cdn.jsdelivr.net' ./external.importer.js -file=./external.dependencies.js -dump=../www/wildtype/ --outdated",
-		"www-upgrade": "deno run --allow-env --allow-read=../ --allow-write=../www/wildtype/ --allow-net='unpkg.com,cdn.jsdelivr.net' ./external.importer.js -file=./external.dependencies.js -dump=../www/wildtype/"
+		"www-upgrade": "deno run --allow-env --allow-read=../ --allow-write=../www/wildtype/ --allow-net='unpkg.com,cdn.jsdelivr.net' ./external.importer.js -file=./external.dependencies.js -dump=../www/wildtype/",
+		"start": "PORT=8080 && deno run --allow-read=./ --allow-net=localhost:$PORT ./http.js --port=$PORT --index=index.html --www=../"
 	}
 }
