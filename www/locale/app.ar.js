@@ -1,4 +1,4 @@
-import { html } from '/wildtype/lit.js';
+import { html } from '../deps.js';
 // arabic
 export const templates = {
 	code: 'ar',

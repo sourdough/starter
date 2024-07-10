@@ -1,4 +1,4 @@
-import { html } from '/wildtype/lit.js';
+import { html } from '../deps.js';
 // traditional chinese Taiwan
 export const templates = {
 	code: 'zh-TW',

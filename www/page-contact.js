@@ -1,6 +1,7 @@
-import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
-import { msg, updateWhenLocaleChanges, getLocale, } from './locales.js';
-import { render } from '/wildtype/lit/html.js';
+import { ReactiveElement, LitElement, html, svg, css,
+	msg, updateWhenLocaleChanges, getLocale, 
+	render
+	} from './deps.js';
 
 customElements.define('page-contact', class extends LitElement{
 	constructor(){

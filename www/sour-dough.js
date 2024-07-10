@@ -1,9 +1,7 @@
 // import '/lib/external/construct-style-sheets-polyfill.js';
-import { Router } from '/wildtype/@vaadin/router/dist/vaadin-router.js';
-
-import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
-
-import { msg, updateWhenLocaleChanges, localeList, localeDictionary, setLocale, getLocale, updateLocaleFromUrl } from './locales.js';
+import { Router } from 'https://sourdough.github.io/wildtype/@vaadin/router/dist/vaadin-router.js';
+import { ReactiveElement, LitElement, html, svg, css, 
+	msg, updateWhenLocaleChanges, localeList, localeDictionary, setLocale, getLocale, updateLocaleFromUrl } from './deps.js';
 
 const routes = [
 { path:'/', animate: true, children: [

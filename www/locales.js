@@ -1,4 +1,4 @@
-import { msg, updateWhenLocaleChanges, configureLocalization } from '/wildtype/@lit/localize/lit-localize.js';
+import { msg, updateWhenLocaleChanges, configureLocalization } from 'https://sourdough.github.io/wildtype/@lit/localize/lit-localize.js';
 
 // sourceLocale is whatever the software templates have programmed in classes
 const sourceLocale = '--';

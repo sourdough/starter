@@ -1,5 +1,5 @@
-import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
-import { msg, updateWhenLocaleChanges, getLocale, } from './locales.js';
+import { ReactiveElement, LitElement, html, svg, css,
+	msg, updateWhenLocaleChanges, getLocale, } from './deps.js';
 
 customElements.define('page-404', class extends LitElement{
 	constructor(){

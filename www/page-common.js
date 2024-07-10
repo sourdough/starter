@@ -1,6 +1,7 @@
-import { ReactiveElement, LitElement, html, svg, css } from '/wildtype/lit.js';
-import { msg, updateWhenLocaleChanges, getLocale, } from './locales.js';
-import { until } from '/wildtype/lit/directives/until.js';
+import { ReactiveElement, LitElement, html, svg, css,
+	msg, updateWhenLocaleChanges, getLocale, 
+	until
+	} from './deps.js';
 
 /* use a component across several urls as an example for similar views, with localization/translation */
 customElements.define('page-common', class extends LitElement{
