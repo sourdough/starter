@@ -34,7 +34,7 @@ customElements.define('page-common', class extends LitElement{
 		this.lang = lang;
 		this.loading = true;
 		this.translation = html`loading`;
-		this.request = import(`/locale/page.${ getLocale() }.js`).then(res=>{
+		this.request = import(`./locale/page.${ getLocale() }.js`).then(res=>{
 			this.translation = res.templates[ location.pathname ];
 			return res;
 		}).catch(err=>{
