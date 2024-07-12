@@ -1,4 +1,4 @@
-import { html } from '/wildtype/lit.js';
+import { html } from '../deps.js';
 // spanish
 export const templates = {
 '/page0': html`

@@ -1,4 +1,4 @@
-import { html } from '/wildtype/lit.js';
+import { html } from '../deps.js';
 // korean
 export const templates = {
 '/page1':html`
