@@ -5,9 +5,9 @@ uses Deno 🦕 more at https://deno.land
 
 a few example to run it:
 
-PORT=8777 && deno run --allow-read=./ --allow-net=0.0.0.0:$PORT ./tools/http.js -port=$PORT -www=./www
+PORT=8777 && deno run --allow-read=./ --allow-net=127.0.0.1:$PORT ./tools/http.js -port=$PORT -www=./www
 
-deno run --allow-read=./ --allow-net=0.0.0.0:8000 ./tools/http.js -www=./
+deno run --allow-read=./ --allow-net=127.0.0.1:8000 ./tools/http.js -www=./
 
 TODO reload on file watching patterns
 
@@ -77,7 +77,7 @@ $0 ${ script }
 cwd ${ Deno.cwd() }
 
 usage like:
-$ deno run --allow-read=./ --allow-net=0.0.0.0:8000 ./tools/http.js -www=./www
+$ deno run --allow-read=./ --allow-net=127.0.0.1:8000 ./tools/http.js -www=./www
 
 overwrite any option with pattern "-name='value'"
 
