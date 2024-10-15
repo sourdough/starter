@@ -22,7 +22,7 @@ import { Application, Router, HttpError, send, Status } from "jsr:@oak/oak";
 
 const script = new URL(import.meta.url).pathname;
 const config = {
-	host: 'localhost'
+	host: '127.0.0.1'
 	,port: 8777
 	,www: './www'
 	,index: 'index.html'
@@ -200,13 +200,20 @@ app.addEventListener('error', (event)=>{
 	console.error(event.error);
 	log('000', 'ERROR', `${ event.error }`, undefined, config.userAgent);
 });
+let _server = null;
 app.addEventListener('listen', (server)=>{
+	_server = server;
 	log('000', 'START', `${ server.secure ? 'https':'http' }://${ server.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
 });
 
-const whenClosed = app.listen(config);
+function exiting(){
+	const server = _server;
+	log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ server.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
+	Deno.exit();
+}
+globalThis.addEventListener('beforeunload', exiting);
+Deno.addSignalListener("SIGINT",exiting);
+Deno.addSignalListener("SIGHUP",exiting);
 
-await whenClosed;
-// this never happens
-log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ server.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
+await app.listen(config);
 
