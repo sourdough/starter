@@ -2,7 +2,7 @@ export const dependencies = [
 // structuredClone for safari, chrome <98
 'https://unpkg.com/@ungap/structured-clone@1.2.0/esm/index.js',
 'https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js',
-'1ttps://unpkg.com/element-internals-polyfill@1.3.11/dist/index.js',
+'https://unpkg.com/element-internals-polyfill@1.3.11/dist/index.js',
 //
 'https://cdn.jsdelivr.net/npm/@lit/localize@0.12.1/lit-localize.js',
 'https://unpkg.com/@lit/context@1.1.2/index.js?module',
