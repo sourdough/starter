@@ -102,7 +102,6 @@ function args_to_config(args=Deno.args, config, helpText=``){
 			console.log(helpText + `
 ${ JSON.stringify(config, false, '\t') }
 `			);
-			Deno.exit(0);
 		}
 	}else if(config[symbols.config]){
 		console.log(`
