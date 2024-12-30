@@ -18,6 +18,7 @@ export const dependencies = [
 
 
 TODOs
+* call out 404 errors (non-200), recently happened with vaadin router where the file changed from vaadin-router.js to index.js
 * add feature for reporting latest major, minor, point releases avaialable for a given list of urls; show status for all the urls requested
 * strip explicit not-allowed characters from content before saving, report removed characters
 * add feature for package.json to print out file list from dependency values

@@ -1,6 +1,6 @@
 export const dependencies = [
 // structuredClone for safari, chrome <98
-'https://unpkg.com/@ungap/structured-clone@1.2.0/esm/index.js',
+'https://unpkg.com/@ungap/structured-clone@1.2.1/esm/index.js',
 'https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js',
 'https://unpkg.com/element-internals-polyfill@1.3.12/dist/index.js',
 //
@@ -31,7 +31,7 @@ export const dependencies = [
 'https://cdn.jsdelivr.net/npm/lit@3.2.1/directives/when.js/+esm',
 'https://cdn.jsdelivr.net/npm/lit@3.2.1/html.js/+esm',
 // features
-'https://unpkg.com/@vaadin/router@2.0.0/dist/vaadin-router.js',
+'https://unpkg.com/@vaadin/router@2.0.0/dist/index.js',
 'https://unpkg.com/pyscript@1.0.6/index.js?module',
 ];
 

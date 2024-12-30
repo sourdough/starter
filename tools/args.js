@@ -1,7 +1,7 @@
-const symbols = {
-	help: Symbol.for('help'),
-	config: Symbol.for('config')
-};
+const symbols = Object.defineProperties({}, {
+	help: {value: Symbol.for('help'), enumerable: true},
+	config: {value: Symbol.for('config'), enumerable: true}
+});
 
 function args_reducer(config, arg, i){
 	// allow -name=value or -name:value, with any number of leading '-' or '--' or '------'
@@ -111,4 +111,4 @@ ${ JSON.stringify(config, false, '\t') }
 
 	return config;
 }
-export { args_to_config as args, args_reducer, args_to_config as default };
+export { symbols, args_to_config as args, args_reducer, args_to_config as default };

@@ -18,6 +18,7 @@ https://doc.deno.land/builtin/stable
 EOL.LF .CRLF see https://deno.land/std/fs
 */
 import * as paf from "jsr:@std/path";
+import args from './args.js';
 import { Application, Router, HttpError, send, Status } from "jsr:@oak/oak";
 
 const script = new URL(import.meta.url).pathname;
@@ -29,44 +30,7 @@ const config = {
 	// default expiration caching (minimum 1 second);
 	,expires: 'private, max-age=1, s-maxage=1'
 };
-Deno.args.reduce(function _options_(config, arg, i){
-	// allow -name=value or -name:value, with any leading '-'
-	const parts = arg.match(/^-+([a-z][a-z0-9]+)(?:[=:]?(.+))?/i);
-	if(parts){
-		const [all, name, value = ''] = parts;
-		// can only set predefined properties
-		if(config[name] === undefined){
-			return config;
-		}
-
-		let val = value.trim();
-		switch(typeof config[ name ]){
-		case 'number':
-			val = Number(val);
-			if(isNaN(val)){
-				console.warn(`skip invalid option ${ name }, expected a number and instead got "${value}" as ${ val }`);
-				return config;
-			}
-			config[ name ] = val;
-		break;
-		case 'boolean':
-			if(val && /^(?:0|false)/i.test(val)){
-				config[ name ] = false;
-			}else if(val !== ''){
-				config[ name ] = Boolean(val);
-			}else{
-				// having the option present suggests making it true
-				config[ name ] = true;
-			}
-		break;
-		default:
-			config[ name ] = val;;
-		};
-	}
-
-	return config;
-
-}, config);
+args(Deno.args, config, `http options...`)
 
 // NOTE resolve(Deno.cwd(), '/root') => '/root'
 config.root = paf.resolve(Deno.cwd(), config.www);
