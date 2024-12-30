@@ -31,7 +31,16 @@ export const dependencies = [
 'https://cdn.jsdelivr.net/npm/lit@3.2.1/directives/when.js/+esm',
 'https://cdn.jsdelivr.net/npm/lit@3.2.1/html.js/+esm',
 // features
-'https://unpkg.com/@vaadin/router@2.0.0/dist/index.js',
+/* 2.0 not worth the trouble? https://unpkg.com/@vaadin/router@2.0.0/dist/router.js?module
+Cannot generate module for @vaadin/router@2.0.0/dist/router.js
+SyntaxError: unknown: Support for the experimental syntax 'classProperties' isn't currently enabled (50:12):
+> 50 |   location = createLocation({ resolver: this });
+     |            ^
+Add @babel/plugin-proposal-class-properties (https://git.io/vb4SL) to the 'plugins' section of your Babel config to enable transformation.
+this also errors, giving up on supporting someone else's software
+'https://cdn.jsdelivr.net/npm/@vaadin/router@2.0.0/dist/index.js/+esm',
+*/
+'https://unpkg.com/@vaadin/router@1.7.5/dist/vaadin-router.js',
 'https://unpkg.com/pyscript@1.0.6/index.js?module',
 ];
 
