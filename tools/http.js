@@ -32,6 +32,10 @@ const config = {
 };
 args(Deno.args, config, `http options...`)
 
+/*
+const env = Deno.env.toObject();
+ * */
+
 // NOTE resolve(Deno.cwd(), '/root') => '/root'
 config.root = paf.resolve(Deno.cwd(), config.www);
 config.userAgent = `Deno/${Deno.version.deno} V8/${Deno.version.v8} TS/${Deno.version.typescript} ${Deno.build.target}`;
@@ -98,7 +102,8 @@ app.use(async (context, next) => {
 			if((response.status || 0) < 400){
 				response.status = status;
 			};
-			log(status, request.method, request.url.href, request.user, request.headers.get('user-agent'), request.ip);
+			const ip = request.headers.get("x-forwarded-for")?.split(',')[0]?.trim() || request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip") || '0.0.0.0';
+			log(status, request.method, request.url.href, request.user, request.headers.get('user-agent'), ip);
 
 			let type = mimetypes[ ext ] || mimetypes[ ( ext = 'html' ) ];
 			response.type = type;
@@ -140,7 +145,8 @@ app.use(async (context, next) => {
 	await next();
 	const request = context.request;
 	const time = context.response.headers.get('X-Response-Time');
-	log(context.response.status, request.method, request.url, request.user, request.headers.get('user-agent'), request.ip, time);
+	const ip = request.headers.get("x-forwarded-for")?.split(',')[0]?.trim() || request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip") || '0.0.0.0';
+	log(context.response.status, request.method, request.url, request.user, request.headers.get('user-agent'), ip, time);
 });
 
 app.use(async (context, next) => {
