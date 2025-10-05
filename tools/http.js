@@ -175,7 +175,7 @@ app.addEventListener('listen', (server)=>{
 
 function exiting(){
 	const server = _server;
-	log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
+	log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ config.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
 	Deno.exit();
 }
 globalThis.addEventListener('beforeunload', exiting);
