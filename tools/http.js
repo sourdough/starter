@@ -20,10 +20,9 @@ EOL.LF .CRLF see https://deno.land/std/fs
 import * as paf from "jsr:@std/path";
 import args from './args.js';
 import { Application, Router, HttpError, send, Status } from "jsr:@oak/oak";
-
 const script = new URL(import.meta.url).pathname;
 const config = {
-	host: '127.0.0.1'
+	hostname: 'localhost'//'::1' // localhost | 127.0.0.1
 	,port: 8777
 	,www: './www'
 	,index: 'index.html'
@@ -36,35 +35,24 @@ args(Deno.args, config, `http options...`)
 const env = Deno.env.toObject();
  * */
 
-// NOTE resolve(Deno.cwd(), '/root') => '/root'
-config.root = paf.resolve(Deno.cwd(), config.www);
+config.root = config.www.startsWith('.') ? paf.resolve(Deno.cwd(), config.www) : paf.resolve(config.www);
+
 config.userAgent = `Deno/${Deno.version.deno} V8/${Deno.version.v8} TS/${Deno.version.typescript} ${Deno.build.target}`;
 
-console.log(`pid ${ Deno.pid }
-$0 ${ script }
-cwd ${ Deno.cwd() }
+console.log(`
+@sourdoug/starter
+	👾 🛰️ 🛸 🚀 http... 🗺️ 📜 📜 📜 📜 📜
+
+	pid ${ Deno.pid }
+	$0 ${ script }
+	cwd ${ Deno.cwd() }
 
 usage like:
-$ deno run --allow-read=./ --allow-net=127.0.0.1:8000 ./tools/http.js -www=./www
+	deno run --allow-read=./ --allow-net=127.0.0.1:8000 ./tools/http.js -www=./www
 
 overwrite any option with pattern "-name='value'"
 
-${ JSON.stringify(config, (key, val)=>{
-	switch(typeof val){
-	case 'object':
-		if(val && val.constructor.name !== 'Object') return val.toString();
-		return val;
-	break;
-	case 'function':
-		return val.toString();
-	break;
-	default:
-		return val;
-	}
-}, '\t') }
-}
-
-`);
+`, {config});
 
 const app = new Application(config);
 const router = new Router();
@@ -173,12 +161,21 @@ app.addEventListener('error', (event)=>{
 let _server = null;
 app.addEventListener('listen', (server)=>{
 	_server = server;
-	log('000', 'START', `${ server.secure ? 'https':'http' }://${ server.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
+	const { hostname } = server;
+	const url = `${ server.secure ? 'https':'http' }://${ hostname || 'localhost' }:${ server.port }`;
+	// 'localhost' || '127.0.0.1' || '::1' (in browsers hostname has brackets for ipv6 '[::1]'
+	console.log(`
+@sourdoug/starter
+
+	hostname: "${hostname}"
+	open ${ url }
+`);
+	log('000', 'START', url, undefined, config.userAgent);
 });
 
 function exiting(){
 	const server = _server;
-	log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ server.hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
+	log('000', 'CLOSE', `${ server.secure ? 'https':'http' }://${ hostname || 'localhost' }:${ server.port }`, undefined, config.userAgent);
 	Deno.exit();
 }
 globalThis.addEventListener('beforeunload', exiting);
