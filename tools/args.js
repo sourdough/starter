@@ -1,5 +1,8 @@
 
-const MAX_VAL_LENGTH = 2048;
+// macos PATH_MAX is 1024, which is absurdly large for an option
+// 512 seems far more reasonable as a strangely large value
+// options like that should not exist--for any general case
+const MAX_VAL_LENGTH = 256;
 
 const symbols = Object.defineProperties({}, {
 	help: {value: Symbol.for('help'), enumerable: true},
