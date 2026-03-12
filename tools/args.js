@@ -1,7 +1,9 @@
 
-// macos PATH_MAX is 1024, which is absurdly large for an option
-// 512 seems far more reasonable as a strangely large value
-// options like that should not exist--for any general case
+/* 
+	- macos PATH_MAX is 1024, which is absurdly large for an option
+	- options like that should not exist--for any general case
+	- any need for large values also require a parser and validator to go with it. normal args are NOT that large
+*/
 const MAX_VAL_LENGTH = 256;
 
 const symbols = Object.defineProperties({}, {
