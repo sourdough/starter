@@ -1,6 +1,10 @@
+
+const MAX_VAL_LENGTH = 2048;
+
 const symbols = Object.defineProperties({}, {
 	help: {value: Symbol.for('help'), enumerable: true},
-	config: {value: Symbol.for('config'), enumerable: true}
+	config: {value: Symbol.for('config'), enumerable: true},
+	positionals: {value: Symbol.for('positionals'), enumerable: true}
 });
 
 function args_reducer(config, arg, i){
@@ -27,6 +31,11 @@ function args_reducer(config, arg, i){
 		}
 
 		let val = value.trim();
+		// NOTE: guard against oversized values (injection, accidents, hostile input)
+		if(val.length > MAX_VAL_LENGTH){
+			console.warn(`skip oversized value for option "${name}" (${val.length} chars, max ${MAX_VAL_LENGTH})`);
+			return config;
+		}
 		switch(typeof config[ name ]){
 		case 'number':
 			val = Number(val);
@@ -94,7 +103,14 @@ console.log(config);
 
 function args_to_config(args=Deno.args, config, helpText=``){
 	if(!args || !args.reduce || !config) return config;
-	args.reduce(args_reducer, config);
+	// NOTE: '--' sentinel — everything after is positional, not parsed as flags
+	const sentinelIdx = args.indexOf('--');
+	const flagArgs = sentinelIdx === -1 ? args : args.slice(0, sentinelIdx);
+	if(sentinelIdx !== -1){
+		config[symbols.positionals] = args.slice(sentinelIdx + 1);
+	}
+	flagArgs.reduce(args_reducer, config);
+
 	if(config[symbols.help] && helpText){
 		if(typeof helpText === 'function'){
 			helpText(config);
@@ -102,6 +118,8 @@ function args_to_config(args=Deno.args, config, helpText=``){
 			console.log(helpText + `
 ${ JSON.stringify(config, false, '\t') }
 `			);
+			// NOTE: string help path exits; use function form for custom control without exit
+			Deno.exit(0);
 		}
 	}else if(config[symbols.config]){
 		console.log(`
