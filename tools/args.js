@@ -3,6 +3,7 @@
 	- macos PATH_MAX is 1024, which is absurdly large for an option
 	- options like that should not exist--for any general case
 	- any need for large values also require a parser and validator to go with it. normal args are NOT that large
+	- config file loading, large properties, parsing, validation beyond what's here, etc are OUT OF SCOPE for this
 */
 const MAX_VAL_LENGTH = 256;
 
