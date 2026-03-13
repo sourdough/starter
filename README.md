@@ -20,9 +20,9 @@ Frontend and middleware developers, system architects, and designers working on 
 - limit scope for maintainability; expand through lightweight self-apparent process
 
 ## browser support
-1st tier: current Chrome, Safari, Edge, Deno
-2nd tier: previous point release of the above (at most one month), Firefox
-Others: case-by-case with clear rationale
+- 1st tier: current Chrome, Safari, Edge, Deno
+- 2nd tier: previous point release of the above (at most one month), Firefox
+- Others: case-by-case with clear rationale
 
 ## includes
 - [args.js](https://github.com/sourdough/starter/blob/main/tools/args.js) —
