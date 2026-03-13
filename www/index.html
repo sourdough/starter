@@ -5,21 +5,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="description" content="basic web project starter for modern web component based single-page web app">
 	<style>
-/* intl */
+/* intl
+ar     Arabic
+arc    Aramaic
+dv     Divehi
+fa     Persian
+ha     Hausa
+he     Hebrew
+khw    Khowar
+ks     Kashmiri
+ku     Kurdish
+ps     Pashto
+ur     Urdu
+yi     Yiddish */
 [lang]{direction:ltr;}
-/*
-ar	Arabic
-arc	Aramaic
-dv	Divehi
-fa	Persian
-ha	Hausa
-he	Hebrew
-khw	Khowar
-ks	Kashmiri
-ku	Kurdish
-ps	Pashto
-ur	Urdu
-yi	Yiddish */
 [lang|="ar" i],
 [lang|="arc" i],
 [lang|="dv" i],
@@ -33,37 +32,35 @@ yi	Yiddish */
 [lang|="ur" i],
 [lang|="yi" i]{direction:rtl;}
 
-
-
 html:before { 
-	content: "Please update to a recent browser (Chrome, Firefox, Edge or Safari). This one is outdated!";
-	display:block; box-sizing:border-box; background-color: #123; color: #fff; font-size: large; padding: 0; width: 100%; height: 100%; position: fixed; z-index: 98765;
+	content: "Please update to a recent browser (Chrome, Firefox, Edge or Safari).";
+	display: block; box-sizing:border-box; background-color: rgba(0,0,0,0.8); color: #fff; font-size: large; font-weight: bold; padding: 1em; position: fixed; z-index: 98765; top: 1em; right: 1em;
 }
 /* browser support
 future: aspect-ratio; current: accent-color; past: :is() min() ::part @supports selector() */
 @supports selector(:is(*)) { html:before{display:none;} }
 /* core */
 :root{
-	--bg: #fff;
-	--alt: #ddd;
-	--txt: #000;
-	--cue: #fc0;
+	--c-bg: #fff;
+	--c-alt: #ddd;
+	--c-txt: #000;
+	--c-cue: #fc0;
 	--ffsans: BlinkMacSystemFont, "Calibri", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Roboto", sans-serif;
 	--ffserif: Georgia, Cambria, serif;
 	--ffmono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Ubuntu Mono", "Roboto Mono", Menlo, Monaco, Consolas, monospace;
 }
 @media (prefers-color-scheme: light){
 	:root{
-		--bgcolor: #fff;
-		--altcolor: #ddd;
-		--txtcolor: #000;
+		--c-bgcolor: #fff;
+		--c-altcolor: #ddd;
+		--c-txtcolor: #000;
 	}
 }
 @media (prefers-color-scheme: dark){
 	:root{
-		--bgcolor: #222;
-		--altcolor: #555;
-		--txtcolor: #fff;
+		--c-bgcolor: #222;
+		--c-altcolor: #555;
+		--c-txtcolor: #fff;
 	}
 }
 @media screen and (max-width: 800px){
@@ -93,7 +90,7 @@ future: aspect-ratio; current: accent-color; past: :is() min() ::part @supports 
 html{background-color:#671;min-width:320px;min-height:320px;}
 body{
 	padding:0; margin:0;
-	background-color:var(--bg,#fff); color:var(--txt, #000);
+	background-color:var(--c-bg,#fff); color:var(--c-txt, #000);
 	min-width: 100vw; min-height: 100vh;
 	display: flex; flex-direction: column;
 	font-family:var(--ffsans); font-size:1rem; line-height:1.3;
@@ -107,14 +104,14 @@ p{margin-block-end:1em;}
 a:link{cursor:pointer;}
 main :is(a:link, a:visited){color:inherit;text-decoration:underline;}
 main a:is(:focus, :active){outline:auto;outline-offset:.2em;text-decoration:none;}
-main a:hover{background-color:var(--cue);}
+main a:hover{background-color:var(--c-cue);}
 cite{font-style:italic;}
 cite:before{content:' - '}
 header, footer{
 	position:sticky;top:0;display:flex;
-	background-color:var(--bgcolor, rgba(255,255,255,1));
-	color: var(--txtcolor, #777);
-	border-width:0 0 thin 0; border-style:dashed; border-color:var(--altcolor, #ccc);
+	background-color:var(--c-bgcolor, rgba(255,255,255,1));
+	color: var(--c-txtcolor, #777);
+	border-width:0 0 thin 0; border-style:dashed; border-color:var(--c-altcolor, #ccc);
 	padding:.7em 1rem;
 	align-items: flex-start;
 	flex-wrap: wrap;
@@ -125,7 +122,7 @@ footer{
 }
 nav{display:inline-flex;flex-grow: 1;}
 footer a,
-header a{color: var(--txtcolor, #ccc);text-decoration:none;margin-inline-end: 1em;padding:0.2em;text-decoration:none;line-height:1rem;}
+header a{color: var(--c-txtcolor, #ccc);text-decoration:none;margin-inline-end: 1em;padding:0.2em;text-decoration:none;line-height:1rem;}
 header nav a:is(:focus, :active, :hover){animation:rotate 3s infinite alternate;outline:none;}
 main{
 	font-family: var(--ffserif);
