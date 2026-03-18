@@ -4,7 +4,7 @@ const excludePathname = new Set([
 ]);
 const staticAssets = new Set([
 	'/sour-dough.js',
-	'/wildtype/lit.js',
+	'/wildtype/lit/index.js',
 	'/wildtype/lit/html.js',
 //	'/wildtype/construct-style-sheets-polyfill.js',
 	'/wildtype/@vaadin/router/dist/vaadin-router.js'
