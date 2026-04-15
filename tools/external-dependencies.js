@@ -3,6 +3,7 @@ export const dependencies = [
 'https://unpkg.com/@ungap/structured-clone@1.3.0/esm/index.js',
 'https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js',
 'https://unpkg.com/element-internals-polyfill@3.0.2/dist/index.js',
+'https://unpkg.com/marked@18.0.0/lib/marked.esm.js',
 //
 'https://cdn.jsdelivr.net/npm/@lit/localize@0.12.2/lit-localize.js',
 'https://unpkg.com/@lit/context@1.1.6/index.js?module',
